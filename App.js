@@ -6,6 +6,12 @@ import { mapping, light as lightTheme, dark } from '@eva-design/eva';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as Pages from './components/pages';
+import * as Location from 'expo-location'
+
+// Location.startLocationUpdatesAsync('corona_watch', {
+//   accuracy: Location.Accuracy.Balanced,
+//   pausesUpdatesAutomatically: true,
+// })
 
 
 const BottomTabBar = ({navigation, state}) => {
@@ -17,7 +23,8 @@ const BottomTabBar = ({navigation, state}) => {
     <SafeAreaView>
       <BottomNavigation selectedIndex={state.index} onSelect={onSelect}>
         <BottomNavigationTab title='HOME'/>
-        <BottomNavigationTab title='REPORT SYMPTOMS'/>
+        <BottomNavigationTab title='MY SYMPTOMS'/>
+        <BottomNavigationTab title='INVITE'/>
         <BottomNavigationTab title='EXPOSURE MAP'/>
       </BottomNavigation>
     </SafeAreaView>
@@ -36,6 +43,7 @@ export default class App extends React.Component {
           <Tab.Navigator tabBar={props => <BottomTabBar {...props} />}>
             <Tab.Screen name="Home" component={Pages.Home}/>
             <Tab.Screen name="Report Symptoms" component={Pages.Report}/>
+            <Tab.Screen name="Invite" component={Pages.Invite}/>
             <Tab.Screen name="Exposure Map" component={Pages.Map}/>
           </Tab.Navigator>
         </NavigationContainer>
