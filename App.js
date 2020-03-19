@@ -14,7 +14,7 @@ import * as Permissions from 'expo-permissions';
 //   accuracy: Location.Accuracy.Balanced,
 //   pausesUpdatesAutomatically: true,
 // })
-let { status } = await Permissions.askAsync(Permissions.LOCATION)
+// let { status } = await Permissions.askAsync(Permissions.LOCATION)
 // let { status } = await Permissions.askAsync(Permissions.CAMERA)
 const BottomTabBar = ({navigation, state}) => {
   const onSelect = (index) => {
