@@ -8,13 +8,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as Pages from './components/pages';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as Location from 'expo-location'
+import * as Permissions from 'expo-permissions';
 
 // Location.startLocationUpdatesAsync('corona_watch', {
 //   accuracy: Location.Accuracy.Balanced,
 //   pausesUpdatesAutomatically: true,
 // })
-
-
+let { status } = await Permissions.askAsync(Permissions.LOCATION)
+// let { status } = await Permissions.askAsync(Permissions.CAMERA)
 const BottomTabBar = ({navigation, state}) => {
   const onSelect = (index) => {
     navigation.navigate(state.routeNames[index]);
