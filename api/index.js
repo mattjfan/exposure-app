@@ -8,4 +8,5 @@ export const getExposureRisk = () => utils.make_skeleton_endpoint({ exposureRisk
 
 export const inviteFriend = (phone_number) => utils.make_skeleton_endpoint()
 
+
 export { location, storage }

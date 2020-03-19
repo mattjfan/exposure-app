@@ -28,7 +28,8 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "location", "fetch"
-        ]
+        ],
+        "NSLocationAlwaysUsageDescription": "We use your location to track your exposure to potential COVID-19 hosts"
       }
     }
   }

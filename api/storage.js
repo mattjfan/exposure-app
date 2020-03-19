@@ -1,7 +1,8 @@
 import { AsyncStorage } from 'react-native';
-
+import * as utils from './utils';
 const CONTACTED_TOKENS_KEY = '@EXPOSURE_APP_CONTACTED_TOKENS' // object of form { token: last_contact_timestamp} for all recorded contacts
 const MY_TOKENS_KEY = '@EXPOSURE_APP_SELF_TOKENS' // list of all known tokens given to others as a self identifier... Currently unused
+const MY_IDENTIFIER = '@EXPSURE_APP_MY_IDENTIFIER'
 
 export const putContactedTokens = (tokens) => {
     AsyncStorage.getItem(
