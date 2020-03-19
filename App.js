@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { ScreenOrientation } from 'expo';
-import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab, Drawer } from '@ui-kitten/components';
 import { mapping, light as lightTheme, dark } from '@eva-design/eva';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as Pages from './components/pages';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as Location from 'expo-location'
 
 // Location.startLocationUpdatesAsync('corona_watch', {
@@ -32,6 +33,17 @@ const BottomTabBar = ({navigation, state}) => {
 
 }
 
+function TabScreen() {
+  return (
+    <Tab.Navigator tabBar={props => <BottomTabBar {...props} />}>
+    <Tab.Screen name="Home" component={Pages.Home}/>
+    <Tab.Screen name="Report Symptoms" component={Pages.Report}/>
+    <Tab.Screen name="Invite" component={Pages.Invite}/>
+    <Tab.Screen name="Exposure Map" component={Pages.Map}/>
+  </Tab.Navigator>
+  );
+};
+
 export default class App extends React.Component {
   componentDidMount() {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
@@ -40,12 +52,9 @@ export default class App extends React.Component {
     return (
       <ApplicationProvider mapping={mapping} theme={dark}>
         <NavigationContainer>
-          <Tab.Navigator tabBar={props => <BottomTabBar {...props} />}>
-            <Tab.Screen name="Home" component={Pages.Home}/>
-            <Tab.Screen name="Report Symptoms" component={Pages.Report}/>
-            <Tab.Screen name="Invite" component={Pages.Invite}/>
-            <Tab.Screen name="Exposure Map" component={Pages.Map}/>
-          </Tab.Navigator>
+          <DrawerNav.Navigator>
+            <DrawerNav.Screen name="Main" component={TabScreen} />
+          </DrawerNav.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
     );
@@ -53,7 +62,7 @@ export default class App extends React.Component {
 }
 
 const Tab = createBottomTabNavigator();
-
+const DrawerNav = createDrawerNavigator();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
