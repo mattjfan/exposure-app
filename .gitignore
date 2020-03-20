@@ -11,6 +11,5 @@ web-build/
 web-report/
 .env
 app.json
-foo.txt
 # macOS
 .DS_Store
