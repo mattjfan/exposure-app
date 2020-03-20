@@ -24,6 +24,10 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "dev.expo.client.ngly7mvpnfj7p6hqnsref2cr3udv7tmzwwkm2ldn3br6e",
+      "config":{
+        "googleMapsApiKey": "AIzaSyALk9DcU4V-u8kJ4o6y8BM5tHjY5P5ITvw"
+      },
       "supportsTablet": true,
       "infoPlist": {
         "UIBackgroundModes": [
