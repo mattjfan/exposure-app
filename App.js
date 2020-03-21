@@ -12,13 +12,14 @@ import * as BackgroundFetch from 'expo-background-fetch'
 import * as Permissions from 'expo-permissions';
 import * as TaskManager from 'expo-task-manager';
 import Dev from './components/dev';
+import * as api from './api';
 
 
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
 const TASK_PERIODIC_UPDATE = "@EXPOSURE_APP_TASK_PERIODIC_UPDATE";
 
-TaskManager.defineTask(TASK_ON_LOC_CHANGE, () => {return null})
-TaskManager.defineTask(TASK_PERIODIC_UPDATE, () => {return null})
+TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
+TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
 
 // Location.setApiKey()
 TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
@@ -35,6 +36,8 @@ TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !is
     startOnBoot: true,
   })
 )
+
+// BackgroundFetch.setMinimumIntervalAsync(1)
 
 const BottomTabBar = ({navigation, state}) => {
   const onSelect = (index) => {

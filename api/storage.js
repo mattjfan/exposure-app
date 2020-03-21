@@ -37,15 +37,6 @@ export const getUserTokens = () => {
     return getUserTokensAfter(new Date(0))
 }
 
-// Remove yourself from the old location bucket and add yourself to your new location bucket
-export const updateLocation = () => {
-    
-}
-
-export const updateNearbyUsers = (tokens) => {
-
-}
-
 export const getMyIdentifier = () => 
     AsyncStorage.getItem(MY_IDENTIFIER) ||
     (

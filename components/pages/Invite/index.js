@@ -25,7 +25,7 @@ class Main extends React.Component {
 
     componentDidMount() {
         api.storage.writeSerializedIdentifier().then(
-            myIdentifier => this.setState(myIdentifier)
+            myIdentifier => this.setState({myIdentifier})
         )
     }
 
