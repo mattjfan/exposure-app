@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layout, Text, Button } from '@ui-kitten/components';
+import {View} from 'react-native'
 import QRCode from 'react-native-qrcode-svg';
 import * as api from '../../../api';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,15 +14,15 @@ export default class stack extends React.Component {
     render () {
         return (
             <Stack.Navigator initialRouteName="Log Contacts">
-                <Stack.Screen name='Log Contacts' component={Main} />
-                <Stack.Screen name='Scan Contact' component={Scan} />
-                <Stack.Screen name='Invite New User' component={Invite} />
+                <Stack.Screen options={{ headerShown: false }} name='Log Contacts' component={Main} />
+                <Stack.Screen name='Scan Contact' component={Scan} options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}}/>
+                <Stack.Screen name='Invite New User' component={Invite} options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}}/>
             </Stack.Navigator>
         )
     }
 }
 class Main extends React.Component {
-    state = {myIdentifier: JSON.stringify({ id: 'TEST_IDENTIFIER', name: '@EXPOSURE_APP_JSON_SERIALIZED_ID' }) }
+    state = {myIdentifier: undefined }
 
     componentDidMount() {
         api.storage.writeSerializedIdentifier().then(
@@ -35,11 +36,11 @@ class Main extends React.Component {
         return (
             <Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{marginBottom: 20}} category="h4">
-                    Invite Peeps
+                    Log Exposures
                 </Text>
-                {this.state.myIdentifier && <QRCode size={200} value={this.state.myIdentifier} />}
-                <Button style={{marginTop: 20}} onPress={this.goToScanContact}>Scan Contact</Button>
-                <Button style={{marginTop: 20}} onPress={this.goToInviteNew}>Invite New Contact</Button>
+                {this.state.myIdentifier && <View style={{backgroundColor: 'white', padding: 12}}><QRCode size={200} value={this.state.myIdentifier} /></View>}
+                <Button style={{marginTop: 20, width: 224}} onPress={this.goToScanContact}>Scan Contact</Button>
+                <Button style={{marginTop: 20, width: 224}} onPress={this.goToInviteNew}>Invite New Contact</Button>
             </Layout>
         )
     }

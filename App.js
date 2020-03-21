@@ -45,7 +45,7 @@ const BottomTabBar = ({navigation, state}) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: '#222B45'}}>
       <BottomNavigation selectedIndex={state.index} onSelect={onSelect}>
         <BottomNavigationTab title='HOME'/>
         <BottomNavigationTab title='MY SYMPTOMS'/>

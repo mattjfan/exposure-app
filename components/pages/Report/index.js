@@ -3,64 +3,33 @@ import { Layout, Text, Datepicker, Button, Select, Card, NativeDateService, Inpu
 import {View} from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack';
 import ReportConfirmedCase from './ReportConfirmedCase'
+import ReportSymptoms from './ReportSymptoms';
+
 const ReportStack = createStackNavigator();
 
 export default function MyStack() {
     return (
-        <ReportStack.Navigator initialRouteName="Report Symptoms">
-            <ReportStack.Screen name='Report Symptoms' component={Report} />
-            <ReportStack.Screen name='Report Confirmed Case' component={ReportConfirmedCase} />
+        <ReportStack.Navigator initialRouteName="Report">
+            <ReportStack.Screen options={{ headerShown: false }} name='Report' component={Report} />
+            <ReportStack.Screen options={{headerStyle: {backgroundColor: '#FF3D71', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} name='Report Confirmed Case' component={ReportConfirmedCase} />
+            <ReportStack.Screen name='Report Symptoms' component={ ReportSymptoms} options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
         </ReportStack.Navigator>
     )
 }
  class Report extends React.Component {
-    state = { status: 'loading', date: new Date()}
-
-    setDate = date => this.setState({ date })
-
-    dateService = new NativeDateService('en', {format: 'MM/DD/YYYY'})
-
-    symptomsList = [
-        { text: 'Fever' },
-        { text: 'Cough' },
-        { text: 'Hard to breathe'},
-    ]
-
     goToReportConfirmedCase = () => {
         this.props.navigation.navigate("Report Confirmed Case")
     }
+    goToReportSymptoms = () => {
+        this.props.navigation.navigate("Report Symptoms")
+    }
 
     render() {
-        const {date} = this.state
         return (
-            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                
-                <Card style={{width: '90%'}}>
-                    <Text category='h4' style={{marginBottom: 16}}> 
-                        Report Symptoms
-                    </Text>
-                    <Datepicker
-                        date={date}
-                        onSelect={this.setDate}
-                        label="First Observed"
-                        dateFormat='MM/DD/YYYY'
-                        dateService={this.dateService}
-                        style={{width: '100%', marginBottom: 8}}
-                    />
-                    <Select
-                        data={this.symptomsList}
-                        label="Symptoms"
-                        style={{width: '100%', marginBottom: 16}}
-                    />
-                    <Input
-                        multiline={true}
-                        maxLength={500}
-                        style={{ marginBottom: 20}}
-                    />
-                    <Button>Log Symptom</Button>
-                </Card>
-               <Button onPress={this.goToReportConfirmedCase} style={{marginTop: 24}} status='danger'> I have a confirmed case</Button>
-
+            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20 }}>
+                <Text category='h4'>Are you sick?</Text>
+                <Button onPress={this.goToReportSymptoms} style={{marginTop: 24, width: '100%'}}> I want to report symptoms</Button>
+                <Button onPress={this.goToReportConfirmedCase} style={{marginTop: 24, width: '100%' }} status='danger'> I have a confirmed case</Button>
             </Layout>
         )
     }
