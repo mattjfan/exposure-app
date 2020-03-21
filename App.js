@@ -11,6 +11,7 @@ import * as Location from 'expo-location'
 import * as BackgroundFetch from 'expo-background-fetch'
 import * as Permissions from 'expo-permissions';
 import * as TaskManager from 'expo-task-manager';
+import Dev from './components/dev';
 
 
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
@@ -84,6 +85,7 @@ export default class App extends React.Component {
         <NavigationContainer>
           <DrawerNav.Navigator>
             <DrawerNav.Screen name="Main" component={TabScreen} />
+            <DrawerNav.Screen name="DEV STUFF" component={Dev}/>
           </DrawerNav.Navigator>
         </NavigationContainer>
       </ApplicationProvider>

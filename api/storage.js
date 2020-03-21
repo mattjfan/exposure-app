@@ -28,7 +28,10 @@ export const getContactedTokensAfter = async (date) => {
         : [] // return empty array by default
 }
 
-export const sendUserTokensAfter = date => null //UNIMPLEMENTED
+export const sendUserTokensAfter = date => {
+   getContactedTokensAfter(date)
+   .then(tokens => utils.post('/UNIMPLEMENTED', { tokens }))
+} //UNIMPLEMENTED
 
 export const getUserTokens = () => {
     return getUserTokensAfter(new Date(0))
@@ -50,4 +53,21 @@ export const getMyIdentifier = () =>
         .then(status => status === 'granted' && Notifications.getExpoPushTokenAsync())
         .then(push_token => utils.post('/request-identifier', { push_token }))
         .then(({identifier}) => identifier)
+        .catch(() => undefined)
     )
+
+const JSON_IDENTIFIER_APP_NAME = '@EXPOSURE_APP_JSON_SERIALIZED_ID'
+
+export const writeSerializedIdentifier = () =>
+    getMyIdentifier()
+    .then(id => JSON.stringify({ id, name: JSON_IDENTIFIER_APP_NAME }))
+
+export const readSerializedIdentifier = (serialized_id) => {
+    try {
+        const id_object = JSON.parse(serialized_id)
+        return id_object.name === JSON_IDENTIFIER_APP_NAME && id_object.id
+    } catch(e) {
+        // TODO: add error handle
+        return undefined
+    }
+}
