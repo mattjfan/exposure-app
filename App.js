@@ -88,6 +88,7 @@ export default class App extends React.Component {
         <NavigationContainer>
           <DrawerNav.Navigator>
             <DrawerNav.Screen name="Main" component={TabScreen} />
+            <DrawerNav.Screen name="About" component={Pages.About} />
             <DrawerNav.Screen name="DEV STUFF" component={Dev}/>
           </DrawerNav.Navigator>
         </NavigationContainer>
