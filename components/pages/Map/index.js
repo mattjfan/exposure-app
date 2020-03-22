@@ -2,17 +2,13 @@ import React from 'react';
 import {StyleSheet,View} from 'react-native'
 import HeatMap from './HeatMap'
 import StateMap from './StateMap'
-import MapView, { PROVIDER_GOOGLE, Geojson } from 'react-native-maps';
-import { Layout, Text } from '@ui-kitten/components';
+import {getMarkers} from './InfectedMap'
+import MapView from 'react-native-map-clustering'
+import { PROVIDER_GOOGLE, Callout } from 'react-native-maps';
+import { Layout, Text, Toggle } from '@ui-kitten/components';
 import usstates from './gz_2010_us_040_00_5m.json'
-
-const testFeatureCoordinates = usstates.features[0].geometry.coordinates.flat(2)
-
-const features= testFeatureCoordinates.map((map)=>{
-   let coords = { latitude: map[0],
-                longitude: map[1] }
-    return coords
-})
+import * as api from '../../../api'
+import {Menu} from './OverLayMenu'
 
 const mapStyle=
     [
@@ -175,18 +171,25 @@ const mapStyle=
       ]
     }
   ]
-
-
-
 const States=[]
 
+const Markers = getMarkers()
+
+const Maps = [HeatMap,StateMap, Markers]
+ 
+
+ 
 export default class extends React.Component {
-    state = { location: undefined }
+    state = { location: undefined,
+               map: '' }
     componentDidMount () {
         navigator.geolocation.getCurrentPosition(
             location => this.setState({location})
         )
       
+    }
+    setOption=(option)=>{
+      this.setState({map: option.text})
     }
     render() {
         const { location } = this.state
@@ -201,20 +204,63 @@ export default class extends React.Component {
                 <MapView
                 provider={PROVIDER_GOOGLE}
                 customMapStyle={mapStyle}
-                style={{...StyleSheet.absoluteFillObject}}
+                //style={{...StyleSheet.absoluteFillObject, flex: 1}}
+                style={{flex:1}}
                 initialRegion={{
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
                 }}
+                clusterColor='red'
                 showsUserLocation
               >
-            <HeatMap/>
-            <StateMap/>
+  
+              <Callout style={style.calloutSearch} >
+              <View style={style.calloutView}>
+              <Menu setOption={this.setOption}
+                    selectedOption={this.state.map}
+              />
+              </View>
+              </Callout>
+
+            {this.state.map=='State Map' &&
+              <StateMap/> }
+            {this.state.map=='Heat Map' && 
+            <HeatMap/> }
+          {this.state.map=='Cluster Map' &&
+             <Markers/> }
+
             </MapView> }
               </React.Fragment>
             
         )
     }
 }
+const style=StyleSheet.create({
+  container: {
+    position: "absolute",
+    right:50,
+    top: 50,
+    width: 200,
+    height: 50,
+    borderRadius: 100,
+  },
+  calloutView: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    width: "40%",
+    marginLeft: "30%",
+    marginRight: "30%",
+    marginTop: 20
+  },
+  calloutSearch: {
+    borderColor: "transparent",
+    marginLeft: 10,
+    width: "90%",
+    marginRight: 10,
+    height: 50,
+    borderWidth: 0.0  
+  }
+})

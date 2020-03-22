@@ -78,17 +78,18 @@ const  CSVParse = (strData,strDelimiter)=>{
         arrData[ arrData.length - 1 ].push( strMatchedValue );
     }
     const data=[]
-    console.log(arrData)
+   
     arrData.forEach((country)=>{
-        if( country[0].length>1 && !isNaN(parseFloat(country[2])) && country[1]=='US' ){
-            console.log(country[0].length>1)
-            console.log(country[0].length)
+        if( country[0].length>1 && !isNaN(parseFloat(country[2])) && country[1]=='US' && country[0].split(',').length!=2){
+            
             let len=country.length
+        
+           
             data.push({
                 name: country[0],
                 latitude: parseFloat(country[2]),
                 longitude: parseFloat(country[3]),
-                weight: parseFloat(country[len-1])})
+                weight: isNaN(parseFloat(country[len-2]))? 0 : parseFloat(country[len-2]) })
         }
     }) 
     return data
@@ -99,7 +100,6 @@ export const getJHUCSV=()=>
     .then((blob)=>blob.text()
     .then((txt)=>{ 
         const data= CSVParse(txt,',')
-        console.log(data)
                 return data } ) )
 
     
