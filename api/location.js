@@ -32,6 +32,11 @@ export const updateCachedLocation = (takeMeasurement = false, options={}) =>
     })
 ;
 
+export const updateContactedPeersWithCachedLocation = () => {
+    AsyncStorage.getItem(CACHED_LOCATION)
+    .then(place_id => updateContactedPeers(place_id))
+}
+
 // can use in promise chain after updateCachedLocation() or AsyncStorage.getItem(CACHED_LOCATION)
 export const updateContactedPeers = (place_id) => {
     utils.post('/get-contacted-ids', {place_id})

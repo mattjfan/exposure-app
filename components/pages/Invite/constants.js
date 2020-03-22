@@ -1,0 +1,3 @@
+PAGE_MAIN = ""
+PAGE_INVITE = ""
+PAGE_SCAN = ""
