@@ -1,36 +1,73 @@
 import React from 'react';
 import { Layout, Text, Datepicker, Button, Select, Card, NativeDateService, Input } from '@ui-kitten/components';
-import {View} from 'react-native'
+import * as api from '../../../api';
 import { createStackNavigator } from '@react-navigation/stack';
-import ReportConfirmedCase from './ReportConfirmedCase'
-import ReportSymptoms from './ReportSymptoms';
+import ReportSymptoms from './reportSymptoms'
 
 const ReportStack = createStackNavigator();
 
-export default function MyStack() {
-    return (
-        <ReportStack.Navigator initialRouteName="Report">
-            <ReportStack.Screen options={{ headerShown: false }} name='Report' component={Report} />
-            <ReportStack.Screen options={{headerStyle: {backgroundColor: '#FF3D71', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} name='Report Confirmed Case' component={ReportConfirmedCase} />
-            <ReportStack.Screen name='Report Symptoms' component={ ReportSymptoms} options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
-        </ReportStack.Navigator>
-    )
-}
- class Report extends React.Component {
-    goToReportConfirmedCase = () => {
-        this.props.navigation.navigate("Report Confirmed Case")
-    }
-    goToReportSymptoms = () => {
-        this.props.navigation.navigate("Report Symptoms")
+export default class extends React.Component{
+    state = { initialRouteName: undefined }
+    componentDidMount() {
+        api.getMyReportedSymptoms()
+        .then(response => {
+            if (response.hasResults) {
+                this.setState({...response, initialRouteName: 'Reported Symptoms'})
+            } else {
+                this.setState({ initialRouteName: 'Report New Symptoms'})
+            }
+        })
     }
 
     render() {
+        const {initialRouteName} = this.state
         return (
-            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20 }}>
-                <Text category='h4'>Are you sick?</Text>
-                <Button onPress={this.goToReportSymptoms} style={{marginTop: 24, width: '100%'}}> I want to report symptoms</Button>
-                <Button onPress={this.goToReportConfirmedCase} style={{marginTop: 24, width: '100%' }} status='danger'> I have a confirmed case</Button>
+            initialRouteName ? (
+                <ReportStack.Navigator initialRouteName={initialRouteName}>
+                    <ReportStack.Screen options={{ headerShown: false }} name='Report New Symptoms' component={ReportNewSymptoms} />
+                    <ReportStack.Screen options={{ headerShown: false }} name = "Reported Symptoms" component={HasReportedSymptoms} />
+                    <ReportStack.Screen name='Update Symptoms' component={UpdateSymptoms}  options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
+                </ReportStack.Navigator>
+            ) :
+            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}><Text>Loading...</Text></Layout>
+        )
+    }
+}
+class ReportNewSymptoms extends React.Component {
+    render() {
+        return (
+            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 32, paddingRight: 32 }}>
+                <Text category='h4' style={{marginBottom: 16}}> 
+                    Report Symptoms
+                </Text>
+                <ReportSymptoms />
             </Layout>
+        )
+    }
+}
+
+class HasReportedSymptoms extends React.Component {
+    render() {
+        return (
+            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 32, paddingRight: 32 }}>
+            <Text category='h4' style={{marginBottom: 16, textAlign: 'center'}}> 
+                Thanks! You have already reported symptoms.
+            </Text>
+            <Button onPress={() => this.props.navigation.navigate("Update Symptoms")}>Update Symptoms</Button>
+        </Layout>
+        )
+    }
+}
+class UpdateSymptoms extends React.Component {
+    render() {
+        // const { date, symptoms, testStatus, testDate } = this.state;
+        return (
+            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 32, paddingRight: 32 }}>
+            <Text category='h4' style={{marginBottom: 16}}> 
+                Update Symptoms
+            </Text>
+            <ReportSymptoms {...this.state} />
+        </Layout>
         )
     }
 }
