@@ -21,6 +21,7 @@ export const Menu = ({setOption,selectedOption}) => {
   return (
       <Select
         data={data}
+       // style={styles.container}
         //multiSelect={true}
         selectedOption={selectedOption}
         onSelect={setOption}
@@ -28,7 +29,6 @@ export const Menu = ({setOption,selectedOption}) => {
    
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
