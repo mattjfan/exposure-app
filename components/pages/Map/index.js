@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet,View} from 'react-native'
+import {StyleSheet,View,Dimensions} from 'react-native'
 import {getHeatMap} from './HeatMap'
 import StateMap,{getStates} from './StateMap'
 import {getMarkers} from './InfectedMap'
@@ -278,13 +278,16 @@ export default class extends React.Component {
         )
     }
 }
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const style=StyleSheet.create({
   container: {
     position: "absolute",
-    right:75,
-    top: 75,
-    width: 200,
-    height: 50,
-    borderRadius: 100,
+    right: windowWidth*0.25 ,
+    top: windowHeight*0.065,
+    width: windowWidth*0.5,
+    height: windowHeight*0.1,
+    borderRadius: 1000,
   },
 })
