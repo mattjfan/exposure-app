@@ -1,6 +1,6 @@
 import React from 'react'
-//import {UsStates as usstates} from '../usStates'
-import usstates from '../gz_2010_us_040_00_20m.json'
+import {UsStates as usstates} from '../usStates'
+//import usstates from '../gz_2010_us_040_00_20m.json'
 import * as api from '../../../../api'
 import MapView, {Geojson} from 'react-native-maps'
 
