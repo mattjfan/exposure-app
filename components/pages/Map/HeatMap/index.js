@@ -53,7 +53,7 @@ export const getHeatMap = () =>{
     }
     })
     const  points = [0.2,0.4,0.6,0.8,.9]
-    console.log(heat_data[0].weight)
+    // console.log(heat_data[0].weight)
     return (<MapView.Heatmap 
                  points={heat_data}
                  heatmapMode={"POINTS_WEIGHT"}

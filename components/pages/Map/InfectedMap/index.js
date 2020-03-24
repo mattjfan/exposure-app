@@ -6,7 +6,7 @@ import {Marker} from 'react-native-maps'
 
 export const getMarkers= () =>{
     const Markers= []
-    const infected=api.location.getInfected() 
+    const infected=api.location.getInfected() // TODO: update to accomodate a promise 
     infected.forEach((c,index)=>{
         Markers.push(
         <Marker

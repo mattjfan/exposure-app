@@ -42,3 +42,5 @@ export const updateContactedPeers = (place_id) => {
     utils.post('/get-contacted-ids', {place_id})
     .then(({ tokens }) => storage_api.putContactedTokens(tokens))
 }
+
+export const getInfected = () => []
