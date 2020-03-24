@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { ScreenOrientation } from 'expo';
-import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab, Drawer } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab, IconRegistry, Drawer } from '@ui-kitten/components';
 import { mapping, light as lightTheme, dark } from '@eva-design/eva';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as Pages from './components/pages';
@@ -92,7 +93,9 @@ export default class App extends React.Component {
   }
   render() {
     return (
+      <React.Fragment>
       <ApplicationProvider mapping={mapping} theme={dark}>
+      <IconRegistry icons={EvaIconsPack}/>
         <NavigationContainer>
           <DrawerNav.Navigator>
             <DrawerNav.Screen name="Main" component={TabScreen} />
@@ -101,6 +104,7 @@ export default class App extends React.Component {
           </DrawerNav.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
+      </React.Fragment>
     );
   }
 }
