@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { ScreenOrientation } from 'expo';
 import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab, Drawer } from '@ui-kitten/components';
 import { mapping, light as lightTheme, dark } from '@eva-design/eva';
@@ -17,27 +17,35 @@ import * as api from './api';
 
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
 const TASK_PERIODIC_UPDATE = "@EXPOSURE_APP_TASK_PERIODIC_UPDATE";
+const handleBackgroundTasksIOs = () => {
+  TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
+  TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
+  
+  // Location.setApiKey()
+  TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
+    Location.startLocationUpdatesAsync(TASK_ON_LOC_CHANGE, {
+      accuracy: Location.Accuracy.Balanced,
+      pausesUpdatesAutomatically: true,
+    })
+  )
+  
+  TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
+    BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
+      minimumInterval: 300,
+      stopOnTerminate: false,
+      startOnBoot: true,
+    })
+  )
+  // BackgroundFetch.setMinimumIntervalAsync(1)
+}
 
-TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
-TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
+const handleBackgroundTasksAndroid = () => {
+  // UNIMPLEMENTED
+}
 
-// Location.setApiKey()
-TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
-  Location.startLocationUpdatesAsync(TASK_ON_LOC_CHANGE, {
-    accuracy: Location.Accuracy.Balanced,
-    pausesUpdatesAutomatically: true,
-  })
-)
+// Find the user's OS and un appropriate background tasks callback
+Platform.OS === 'ios' ? handleBackgroundTasksIOs() : handleBackgroundTasksAndroid();
 
-TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
-  BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
-    minimumInterval: 300,
-    stopOnTerminate: false,
-    startOnBoot: true,
-  })
-)
-
-// BackgroundFetch.setMinimumIntervalAsync(1)
 
 const BottomTabBar = ({navigation, state}) => {
   const onSelect = (index) => {

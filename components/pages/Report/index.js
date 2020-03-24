@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Text, Datepicker, Button, Select, Card, NativeDateService, Input } from '@ui-kitten/components';
 import * as api from '../../../api';
 import { createStackNavigator } from '@react-navigation/stack';
-import ReportSymptoms from './reportSymptoms'
+import ReportSymptoms from './ReportSymptoms'
 
 const ReportStack = createStackNavigator();
 
