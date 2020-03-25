@@ -18,6 +18,7 @@ export const getReportedSymptoms = identifier =>
 export const getMyReportedSymptoms = () => 
     storage.getMyIdentifier()
     .then(id => getReportedSymptoms(id))
+    .catch(() => undefined)
 
 export const reportSymptoms = (data) =>
     Promise.all([

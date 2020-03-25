@@ -2,6 +2,7 @@ import React from 'react'
 import { Layout, Text, Button, Select } from '@ui-kitten/components';
 import * as Contacts from 'expo-contacts';
 import * as api from '../../../api';
+import Loading from '../Loading';
 
 export default class extends React.Component {
     state = { phone: undefined, contacted: undefined, _phoneContacts: undefined}
@@ -21,12 +22,10 @@ export default class extends React.Component {
 
     render() {
         return (
+            this.state._phoneContacts ?
             <Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 32, paddingRight: 32 }}>
-                {
-                    this.state._phoneContacts &&
-                    <React.Fragment>
                         <Text style={{marginBottom: 20}} category="h4">
-                            Invite Peeps
+                            Invite Contacts
                         </Text>
                         <Select
                             style={{ marginBottom: 20, width: '100%'}}
@@ -43,10 +42,8 @@ export default class extends React.Component {
                             onSelect={contacted => this.setState({contacted})}
                         />
                         <Button style={{width: '100%'}} onPress={this.sendInvitation}>Send Invitation</Button>
-                    </React.Fragment>
-
-                }
             </Layout>
+            : <Loading />
         )
     }
 }

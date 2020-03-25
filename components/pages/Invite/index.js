@@ -6,6 +6,7 @@ import * as api from '../../../api';
 import { createStackNavigator } from '@react-navigation/stack';
 import Invite from './invite';
 import Scan from './scan';
+import Loading from '../Loading';
 
 const Stack = createStackNavigator();
 
@@ -33,15 +34,15 @@ class Main extends React.Component {
     goToInviteNew = () => this.props.navigation.navigate('Invite New User')
     goToScanContact = () => this.props.navigation.navigate('Scan Contact')
     render() {
-        return (
-            <Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        return this.state.myIdentifier ?
+            (<Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{marginBottom: 20}} category="h4">
                     Log Exposures
                 </Text>
-                {this.state.myIdentifier && <View style={{backgroundColor: 'white', padding: 12}}><QRCode size={200} value={this.state.myIdentifier} /></View>}
+                    <View style={{backgroundColor: 'white', padding: 12}}><QRCode size={200} value={this.state.myIdentifier} /></View>
                 <Button style={{marginTop: 20, width: 224}} onPress={this.goToScanContact}>Scan Contact</Button>
                 <Button style={{marginTop: 20, width: 224}} onPress={this.goToInviteNew}>Invite New Contact</Button>
-            </Layout>
-        )
+            </Layout>)
+            : <Loading />
     }
 }

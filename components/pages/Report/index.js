@@ -3,7 +3,7 @@ import { Layout, Text, Datepicker, Button, Select, Card, NativeDateService, Inpu
 import * as api from '../../../api';
 import { createStackNavigator } from '@react-navigation/stack';
 import ReportSymptoms from './ReportSymptoms';
-
+import Loading from '../Loading';
 
 const ReportStack = createStackNavigator();
 
@@ -12,7 +12,7 @@ export default class extends React.Component{
     componentDidMount() {
         api.getMyReportedSymptoms()
         .then(response => {
-            if (response.hasResults) {
+            if (response && response.hasResults) {
                 this.setState({...response, initialRouteName: 'Reported Symptoms'})
             } else {
                 this.setState({ initialRouteName: 'Report New Symptoms'})
@@ -30,7 +30,7 @@ export default class extends React.Component{
                     <ReportStack.Screen name='Update Symptoms' component={UpdateSymptoms}  options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
                 </ReportStack.Navigator>
             ) :
-            <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}><Text>Loading...</Text></Layout>
+            <Loading />
         )
     }
 }
