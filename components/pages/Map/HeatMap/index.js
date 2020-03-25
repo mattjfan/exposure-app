@@ -47,8 +47,8 @@ export const getHeatMap = () =>{
     const time = cur-beg
     const heat_data=api.location.getInfected().map((data)=>{
     return {
-        latitude: data[1],
-        longitude: data[2],
+        latitude: parseFloat(data[1]),
+        longitude: parseFloat(data[2]),
         weight: Date.parse(data[3])-Date.parse('2019-03-20')
     }
     })

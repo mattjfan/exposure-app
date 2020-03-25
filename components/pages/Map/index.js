@@ -7,7 +7,7 @@ import MapView from 'react-native-map-clustering'
 import { PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import { Layout, Text, Toggle, Select } from '@ui-kitten/components';
 import * as api from '../../../api'
-//import {Menu} from './OverLayMenu'
+
 
 const Menu = ({setOption,selectedOption}) => {
   const data=[
@@ -195,18 +195,6 @@ const Markers= getMarkers()
 const HeatMap= getHeatMap() 
 
 
-
-
-
-
-
-
- /*
-<Menu 
-             // style={{ position: 'absolute', top: 100}}
-              setOption={this.setOption}
-              selectedOption={this.state.map}/>*/
- 
 export default class extends React.Component {
     state = { selected: {location: 'Heat Map'},
                          map: 'Heat Map' }
@@ -223,13 +211,7 @@ export default class extends React.Component {
     render() {
         const { location } = this.state
         return (
-            // <Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            //     <Text>
-            //         Exposure Map
-            //     </Text>
-            // </Layout>
-      
-           
+
             <React.Fragment>
             {this.state.location != null &&
              
@@ -247,15 +229,6 @@ export default class extends React.Component {
                 clusterColor='red'
                 showsUserLocation
               >
-
-              <Callout
-              style={{ position: 'absolute', top: 100}}
-              >
-              <Text>Hello</Text>
-
-              </Callout>
-  
-           
 
             {this.state.map=='State Map' &&
               (States) }
