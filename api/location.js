@@ -5,6 +5,7 @@ import * as storage_api from './storage';
 import { AsyncStorage } from 'react-native';
 
 const CACHED_LOCATION = '@EXPOSURE_APP_CACHED_PLACE_ID'
+
 // Updates location.
 // Can specify to take a new measurement, and provide options if desired
 const text = `id,latitude,longitude,time,diagnostic_time
@@ -1096,8 +1097,10 @@ export const updateLocation = async (takeMeasurement = false, options={}) => {
     const user_identifier = await storage_api.getMyIdentifier();
     const old_place_id = await AsyncStorage.getItem(CACHED_LOCATION);
     (takeMeasurement ? Location.getCurrentPositionAsync(options) : Location.getLastKnownPositionAsync())
-    .then(location => 
-        utils.getJSONFromExternalEndpoint(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${Constants.manifest.extra.GOOGLE_MAPS_API_KEY}`))
+    .then(location => {
+        storage_api.saveLocation(location)
+        return utils.getJSONFromExternalEndpoint(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${Constants.manifest.extra.GOOGLE_MAPS_API_KEY}`);
+    })
     .then(resp => resp.results[0].place_id)
     .then(new_place_id => {
         utils.post('/update-location', { new_place_id, old_place_id, user_identifier })

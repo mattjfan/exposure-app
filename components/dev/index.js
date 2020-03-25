@@ -12,6 +12,7 @@ export default class Dev extends React.Component{
             <Button onPress={api.location.updateContactedPeersWithCachedLocation}>Get Contacted Peers</Button>
             <Button onPress={() => TaskManager.getRegisteredTasksAsync().then(x => console.log(x))}>Log Tasks</Button>
             <Button onPress={TaskManager.unregisterAllTasksAsync}>Unregister Tasks</Button>
+            <Button onPress={api.storage.deleteIdentifier}>Delete Identifier</Button>
             
         </Layout>
         )

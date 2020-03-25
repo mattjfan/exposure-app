@@ -17,6 +17,7 @@ export default class extends React.Component {
 
     setDate = date => this.setState({ date })
     setTestDate = testDate => this.setState({ testDate })
+    setAdditionalInfo = additional_info => this.setState({ additional_info })
     dateService = new NativeDateService('en', {format: 'MM/DD/YYYY'})
 
     symptomsList = [
@@ -33,18 +34,18 @@ export default class extends React.Component {
         { text: 'Difficulty Breathing/Shortness of Breath'},
     ]
 
-    TEST_STATUS_YES_WAITING = 'Yes, waiting on results'
-    TEST_STATUS_YES_NEGATIVE = 'Yes, negative'
-    TEST_STATUS_YES_POSITIVE = 'Yes, positive'
+    TEST_STATUS_YES_WAITING = {text: 'Yes, waiting on results', code: 'YES_WAITING' }
+    TEST_STATUS_YES_NEGATIVE = {text: 'Yes, negative', code: 'YES_NEGATIVE' }
+    TEST_STATUS_YES_POSITIVE = {text: 'Yes, positive', code: 'YES_POSITIVE' }
 
     TEST_STATUS_YESS = [
-        this.TEST_STATUS_YES_WAITING,
-        this.TEST_STATUS_YES_NEGATIVE,
-        this.TEST_STATUS_YES_POSITIVE,
+        this.TEST_STATUS_YES_WAITING.text,
+        this.TEST_STATUS_YES_NEGATIVE.text,
+        this.TEST_STATUS_YES_POSITIVE.text,
     ]
 
-    TEST_STATUS_NO_DENIED = 'No, denied testing'
-    TEST_STATUS_NO = 'No, have not requested'
+    TEST_STATUS_NO_DENIED = { text: 'No, denied testing', code: 'NO_DENIED' }
+    TEST_STATUS_NO = { text: 'No, have not requested', code: 'NO' }
 
     testStatus = [
         this.TEST_STATUS_YES_POSITIVE,
@@ -52,15 +53,21 @@ export default class extends React.Component {
         this.TEST_STATUS_YES_WAITING,
         this.TEST_STATUS_NO_DENIED,
         this.TEST_STATUS_NO
-    ].map(text => ({ text }))
+    ]
     
     hasBeenTested = () =>
         this.state.testStatus && this.TEST_STATUS_YESS.includes(this.state.testStatus.text);
 
     submitReport = () => {
-        const { date, symptoms, testStatus, testDate } = this.state;
+        const { date, symptoms, testStatus, testDate, additional_info } = this.state;
         if (date && symptoms && testStatus && ( testDate || !this.hasBeenTested())) {
-            api.reportSymptoms({ date, symptoms, testStatus, testDate })
+            api.reportSymptoms({
+                symptoms_date: date,
+                symptoms,
+                tested_status: testStatus.code,
+                ...(testDate && {test_date: testDate}),
+                additional_info,
+            })
         } else {
             // TODO: show validation error
         }
@@ -107,6 +114,8 @@ export default class extends React.Component {
                     multiline={true}
                     maxLength={500}
                     style={{ marginBottom: 20}}
+                    value={this.state.additional_info}
+                    onChangeText={this.setAdditionalInfo}
                 />
                 <Button style={{width: '100%'}} onPress={this.submitReport}>Submit Report</Button>
             </React.Fragment>
