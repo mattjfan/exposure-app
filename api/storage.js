@@ -21,6 +21,21 @@ export const putContactedTokens = (tokens) => {
     )
 }
 
+export const putContactedIndividuals = data => {
+    AsyncStorage.getItem(
+        CONTACTED_TOKENS_KEY,
+        (err, _old_tokens) => {
+            const old_tokens = _old_tokens ?  JSON.parse(_old_tokens) : {}
+            data.forEach(d => {
+                old_tokens[d.identifier] = d.contact_time
+                 // Just keeping most recent contact
+            });
+            AsyncStorage.setItem(CONTACTED_TOKENS_KEY, JSON.stringify(old_tokens))
+        }
+    )
+    .catch(() => null)
+}
+
 export const saveLocation = (location) => {
     AsyncStorage.getItem(
         HISTORICAL_LOCATIONS,
@@ -82,13 +97,20 @@ export const getMyIdentifier = () =>
     //     .catch(() => undefined)
     // )
 
-export const getNewIdentifier = (phone) =>
-    Permissions.askAsync(Permissions.NOTIFICATIONS)
-    .then(status => status === 'granted' && Notifications.getExpoPushTokenAsync())
+export const getNewIdentifier = (phone) => {
+    Permissions.askAsync(Permissions.NOTIFICATIONS).then(({status}) => console.log(`PUSH STATUS: ${status}`));
+    Notifications.getExpoPushTokenAsync().then(token => console.log(`TOKEN: ${token}`));
+    return Permissions.askAsync(Permissions.NOTIFICATIONS)
+    .then(({status}) => status === 'granted' && Notifications.getExpoPushTokenAsync())
     .then(push_token => utils.post('/signup', { phone, push_token }))
-    .then(({identifier}) => AsyncStorage.setItem(MY_IDENTIFIER, identifier))
+    .then(
+        ({identifier, contacted_individuals}) => AsyncStorage.setItem(MY_IDENTIFIER, identifier)
+        .then(() => putContactedIndividuals(contacted_individuals))
+    ) //TODO: put contacted tokens
     .then(() => true)
     .catch(() => false);
+}
+
 
 
 const JSON_IDENTIFIER_APP_NAME = '@EXPOSURE_APP_JSON_SERIALIZED_ID'

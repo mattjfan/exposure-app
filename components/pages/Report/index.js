@@ -10,24 +10,29 @@ const ReportStack = createStackNavigator();
 export default class extends React.Component{
     state = { initialRouteName: undefined }
     componentDidMount() {
+      this.loadSymptoms();
+    }
+
+    loadSymptoms = () =>
         api.getMyReportedSymptoms()
         .then(response => {
-            if (response && response.hasResults) {
+            if (response && response.has_response) {
                 this.setState({...response, initialRouteName: 'Reported Symptoms'})
             } else {
                 this.setState({ initialRouteName: 'Report New Symptoms'})
             }
         })
-    }
+    ;
 
     render() {
+        console.log(this.state)
         const {initialRouteName} = this.state
         return (
             initialRouteName ? (
                 <ReportStack.Navigator initialRouteName={initialRouteName}>
                     <ReportStack.Screen options={{ headerShown: false }} name='Report New Symptoms' component={ReportNewSymptoms} />
                     <ReportStack.Screen options={{ headerShown: false }} name = "Reported Symptoms" component={HasReportedSymptoms} />
-                    <ReportStack.Screen name='Update Symptoms' component={UpdateSymptoms}  options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
+                    <ReportStack.Screen name='Update Symptoms' component={UpdateSymptoms} initialParams={{...this.state, loadSymptoms: this.loadSymptoms}}  options={{headerStyle: {backgroundColor: '#222B45', elevation: 0, shadowOpacity: 0}, headerTintColor:'white', headerTitleStyle: {fontWeight: 'bold'}}} />
                 </ReportStack.Navigator>
             ) :
             <Loading />
@@ -67,7 +72,7 @@ class UpdateSymptoms extends React.Component {
             <Text category='h4' style={{marginBottom: 16}}> 
                 Update Symptoms
             </Text>
-            <ReportSymptoms {...this.state} />
+            <ReportSymptoms {...this.props.route.params} onSubmit={() => this.props.route.params.loadSymptoms().then(() => this.props.navigation.navigate('Reported Symptoms'))} />
         </Layout>
         )
     }

@@ -38,6 +38,10 @@ export const post = (endpoint, body = {}) =>
             withCredentials: 'true',
         }
     )
+    .then(resp => {
+        console.log(JSON.stringify(body))
+        return resp
+    })
     .then(response => Promise.all([response, response.json()]))
     .then(([res, json]) => checkError(res, json))
 

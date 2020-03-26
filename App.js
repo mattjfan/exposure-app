@@ -14,8 +14,6 @@ import * as Permissions from 'expo-permissions';
 import * as TaskManager from 'expo-task-manager';
 import Dev from './components/dev';
 import * as api from './api';
-import { createStackNavigator } from '@react-navigation/stack';
-import Register from './components/pages/Register';
 
 
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
@@ -132,8 +130,6 @@ export default class App extends React.Component {
   }
 }
 
-
-const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const DrawerNav = createDrawerNavigator();
 const styles = StyleSheet.create({

@@ -1,12 +1,23 @@
 import React from 'react';
-import {Input, Layout, Text, Button} from '@ui-kitten/components'
-import * as api from '../../../api'
+import {Input, Layout, Text, Button} from '@ui-kitten/components';
+import * as api from '../../../api';
 
 export default class Register extends React.Component {
-    state = {phoneNumber: ''}
+    state = {loading: false, phoneNumber: ''}
     setPhoneNumber = phoneNumber => (/^\d*$/g.test(phoneNumber)) && this.setState({ phoneNumber });
-    signup = () => /^\d{10,}$/g.test(this.state.phoneNumber) && api.storage.getNewIdentifier(this.state.phoneNumber).then(this.props.onSubmit);
+
+    signup = () => {
+        this.setState({loading: true},
+            () => /^\d{10,}$/g.test(this.state.phoneNumber)
+            && api.storage.getNewIdentifier(this.state.phoneNumber)
+            .then(this.props.onSubmit)
+            .catch(() => this.setState({loading: false}))
+        );
+
+    };
+
     render () {
+        const { loading } = this.state;
         return (
             <Layout  style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20}}>
                 <Text category='h4' style={{marginBottom: 12}}>
@@ -19,7 +30,7 @@ export default class Register extends React.Component {
                             value={this.state.phoneNumber}
                             onChangeText={this.setPhoneNumber}
                 />
-                <Button style={{width: '100%'}} onPress={this.signup}>Register device</Button>
+                <Button style={{width: '100%'}} onPress={this.signup} disabled={loading}>Register device</Button>
         
             </Layout>
         )

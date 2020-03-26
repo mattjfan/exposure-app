@@ -7,10 +7,12 @@ import * as jhu_data from './jhu_data'
 
 export const getExposureRisk = () => 
     storage.getMyIdentifier()
-    .then(identifier => utils.post('/get-status', { identifier }))
+    .then(identifier => utils.post('/get_exposure_risk', { identifier }))
 
-export const inviteFriend = (phone, contacted = false) => utils.post('invite-new-user', { phone, contacted})
-    .then(({identifier}) => contacted && storage.putContactedTokens([identifier]));
+export const inviteFriend = (phone, contacted = false) => 
+    storage.getMyIdentifier()
+    .then(inviter_identifier => utils.post('invite-new-user', { phone, contacted, inviter_identifier }))
+    .then(({ identifier }) => contacted && storage.putContactedTokens([identifier]));
 
 export const getReportedSymptoms = identifier =>
     utils.post('/get-symptoms', { identifier });
@@ -22,12 +24,14 @@ export const getMyReportedSymptoms = () =>
 
 export const reportSymptoms = (data) =>
     Promise.all([
+        storage.getMyIdentifier(),
         storage.getContactedTokensWithTimestamps(),
         storage.getLocations(),
     ])
     .then(([
+        identifier,
         contacted_individuals,
         visited_locations,
-    ]) => utils.post('/report_sickness_or_positive_test', {...data, contacted_individuals, visited_locations}))
+    ]) => utils.post('/report_sickness_or_positive_test', {...data, identifier, contacted_individuals, visited_locations}))
 
 export { location, storage, jhu_data }
