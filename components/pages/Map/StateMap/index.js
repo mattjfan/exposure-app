@@ -1,5 +1,5 @@
 import React from 'react'
-import {UsStates as usstates} from '../usStates'
+import {UsStates as usstates} from './usStates'
 //import usstates from '../gz_2010_us_040_00_20m.json'
 import * as api from '../../../../api'
 import MapView, {Geojson} from 'react-native-maps'
@@ -7,20 +7,60 @@ import MapView, {Geojson} from 'react-native-maps'
 const States=[]
 
 
-const DataDict=(data)=>{
+const DataDict=(stateNames, popDict, casesDict)=>{
     let dict = {}
     let max=0
-    data.forEach((ex)=>{
-        let name=ex.name
-        let infections_per_100k=ex.weight/StatePop[name]
+    stateNames.forEach((state)=>{
+        let infections_per_100k=casesDict[state]/popDict[state]
+
         if(!isNaN(infections_per_100k)){
             max= max > infections_per_100k ? max : infections_per_100k }
-        dict[name]= infections_per_100k }
+
+        dict[state]= infections_per_100k }
     )
     return {dict,max}
 }
+
+
+export const getStates = async () =>{
+    const{data,sum,count} = await api.jhu_data.getJHUCSV()
+
+    dataDict={}
+
+    data.forEach(ex=>dataDict[ex.name]=(dataDict[ex.name]|| 0)+ex.weight)
+    
+    let stateNames=Object.keys(dataDict)
+
+    const {dict,max} = DataDict(stateNames, StatePop, dataDict)
+
+    usstates.features.forEach((state,index)=>{
+        let name = state.properties['NAME']
+        let alpha=dict[name]/max
+        let data={type: 'FeatureCollection'}
+
+        data.features=[state]
+
+        States.push(<Geojson 
+            geojson={data} 
+            fillColor={`rgba(200, 0, 0, ${alpha*0.9})`}
+            strokeWidth={0}
+            key={`geoJSON${index}`} 
+            />)
+
+    }) 
+    return (States)
+    } 
+
+
+    
+    
+
+
+
+/*
 export const getStates = () =>{
     api.jhu_data.getJHUCSV().then(data=>{
+        console.log(data)
         const {dict,max} = DataDict(data)
         usstates.features.forEach((state,index)=>{
             let name = state.properties['NAME']
@@ -40,6 +80,7 @@ export const getStates = () =>{
     }) 
     return (States)
 }
+*/
 
 const StatePop={
     "Alabama": 4903185,

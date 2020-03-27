@@ -17,29 +17,46 @@ import * as api from './api';
 import { createStackNavigator } from '@react-navigation/stack';
 import Register from './components/pages/Register';
 
-
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
 const TASK_PERIODIC_UPDATE = "@EXPOSURE_APP_TASK_PERIODIC_UPDATE";
+
+TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location.updateLocation)
+
+TaskManager.defineTask(TASK_PERIODIC_UPDATE, () => {
+  try{
+  console.log('YAAAASS');
+  api.location.updateContactedPeersWithCachedLocation();
+  return BackgroundFetch.Result.NewData; }
+  catch(error) {
+    return BackgroundFetch.Result.Failed;
+  }
+})
+
+ 
+TaskManager.unregisterTaskAsync(TASK_PERIODIC_UPDATE)
+
+
+
+
 const handleBackgroundTasksIOs = () => {
-  TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
-  TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
-  
   // Location.setApiKey()
   TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
     Location.startLocationUpdatesAsync(TASK_ON_LOC_CHANGE, {
-      accuracy: Location.Accuracy.Balanced,
+      accuracy: Location.Accuracy.High,
+      distanceInterval: 100,
+      //timeInterval: 60000,
       pausesUpdatesAutomatically: true,
     })
   )
   
   TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
     BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
-      minimumInterval: 300,
+      minimumInterval: 650,
       stopOnTerminate: false,
       startOnBoot: true,
     })
   )
-  // BackgroundFetch.setMinimumIntervalAsync(1)
+ BackgroundFetch.setMinimumIntervalAsync(650)
 }
 
 const handleBackgroundTasksAndroid = () => {
@@ -108,6 +125,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
     api.storage.getMyIdentifier()
     .then(res => {
@@ -144,3 +162,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+
