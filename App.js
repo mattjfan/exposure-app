@@ -41,11 +41,40 @@ const handleBackgroundTasksIOs = () => {
 }
 
 const handleBackgroundTasksAndroid = () => {
-  // UNIMPLEMENTED
+  TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
+  TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
+  
+  // Location.setApiKey()
+  TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
+    Location.startLocationUpdatesAsync(TASK_ON_LOC_CHANGE, {
+      accuracy: Location.Accuracy.Balanced,
+      pausesUpdatesAutomatically: true,
+    })
+  )
+  
+  TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
+    BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
+      minimumInterval: 300,
+      stopOnTerminate: false,
+      startOnBoot: true,
+    })
+  )
+}
+
+const startPushNotificationsListener = () => {
+
 }
 
 // Find the user's OS and un appropriate background tasks callback
-Platform.OS === 'ios' ? handleBackgroundTasksIOs() : handleBackgroundTasksAndroid();
+Permissions.askAsync(Permissions.LOCATION)
+.then(({ status }) => status === 'granted'
+  && ( // currently fails silently if not granted
+    Platform.OS === 'ios'
+    ? handleBackgroundTasksIOs()
+    : handleBackgroundTasksAndroid()
+  )
+)
+
 
 
 const BottomTabBar = ({navigation, state}) => {
@@ -91,10 +120,6 @@ function DrawerScreen() {
 
 export default class App extends React.Component {
   state = { Screen: Pages.Loading}
-
-  askForPermissions = async () => {
-    let {status} = await Permissions.askAsync(Permissions.LOCATION)
-  }
   
   finishRegistration = () => {
     this.setState({Screen: DrawerScreen})
@@ -102,7 +127,6 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.askForPermissions();
   }
 
   componentDidMount() {
