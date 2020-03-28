@@ -107,8 +107,6 @@ export const getNewIdentifier = (phone) => {
         ({identifier, contacted_individuals}) => AsyncStorage.setItem(MY_IDENTIFIER, identifier)
         .then(() => putContactedIndividuals(contacted_individuals))
     ) //TODO: put contacted tokens
-    .then(() => true)
-    .catch(() => false);
 }
 
 
@@ -131,3 +129,5 @@ export const readSerializedIdentifier = (serialized_id) => {
 
 export const deleteIdentifier = () =>
     AsyncStorage.removeItem(MY_IDENTIFIER)
+
+export const getPushToken = () => Notifications.getExpoPushTokenAsync()
