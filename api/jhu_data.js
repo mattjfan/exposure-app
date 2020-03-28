@@ -78,28 +78,50 @@ const  CSVParse = (strData,strDelimiter)=>{
         arrData[ arrData.length - 1 ].push( strMatchedValue );
     }
     const data=[]
+    let count=0
+    let sum = 0
+
+    console.log('BEGGINGING ',arrData[1])
    
     arrData.forEach((country)=>{
-        if( country[0].length>1 && !isNaN(parseFloat(country[2])) && country[1]=='US' && country[0].split(',').length!=2){
+        if(country[3]=='US' ){
             
             let len=country.length
-        
-           
+            count++
+            sum+=parseFloat(country[7])
             data.push({
-                name: country[0],
-                latitude: parseFloat(country[2]),
-                longitude: parseFloat(country[3]),
-                weight: isNaN(parseFloat(country[len-2]))? 0 : parseFloat(country[len-2]) })
+                name: country[2],
+                latitude: parseFloat(country[5]),
+                longitude: parseFloat(country[6]),
+                weight: isNaN(parseFloat(country[7]))? 0 : parseFloat(country[7]) })
         }
     }) 
-    return data
+    return {data,count,sum}
+}
+const appendLeadingZeroes=(n)=>{
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+const getCurrentDate=()=>{
+    var date = new Date()
+    date.setDate(date.getDate()-1)
+    let day = appendLeadingZeroes( date.getDate() )
+    day=parseInt(day)
+    let month =  appendLeadingZeroes( date.getMonth()+1 )
+    let year= date.getFullYear()
+    console.log('YEAR',year)
+    console.log(`${month}-${day}-${year}`)
+    return `${month}-${day}-${year}`
 }
 
 export const getJHUCSV=()=>
-    fetch('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
+    fetch(`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${getCurrentDate()}.csv`)
     .then((blob)=>blob.text()
     .then((txt)=>{ 
         const data= CSVParse(txt,',')
                 return data } ) )
+    .catch(e=>console.log(e))
 
     

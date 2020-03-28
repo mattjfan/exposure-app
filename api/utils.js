@@ -49,3 +49,5 @@ export const getJSONFromExternalEndpoint = (endpoint) =>
         fetch(endpoint)
         .then(response => Promise.all([response, response.json()]))
         .then(([res, json]) => checkError(res, json))
+
+

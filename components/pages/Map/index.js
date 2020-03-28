@@ -1,12 +1,11 @@
 import React from 'react';
 import {StyleSheet,View,Dimensions} from 'react-native'
-import {getHeatMap} from './HeatMap'
-import StateMap,{getStates} from './StateMap'
-import {getMarkers} from './InfectedMap'
+import {getStates} from './StateMap'
+import {getInfectedMaps} from './InfectedMaps'
 import MapView from 'react-native-map-clustering'
-import { PROVIDER_GOOGLE, Callout } from 'react-native-maps';
-import { Layout, Text, Toggle, Select } from '@ui-kitten/components';
-import * as api from '../../../api'
+import { PROVIDER_GOOGLE } from 'react-native-maps';
+import { Select,Text } from '@ui-kitten/components';
+
 
 
 const Menu = ({setOption,selectedOption}) => {
@@ -19,11 +18,10 @@ const Menu = ({setOption,selectedOption}) => {
   return (
       <Select
         data={data}
-        placeHolder={selectedOption.text}
+        placeHolder={(<Text>{selectedOption.txt}}</Text>)}
         selectedOption={selectedOption}
         onSelect={setOption}
       />
-   
   );
 };
 
@@ -190,36 +188,37 @@ const mapStyle=
     }
   ]
 
-const States= getStates()
-const Markers= getMarkers()
-const HeatMap= getHeatMap() 
+
+
 
 
 export default class extends React.Component {
-    state = { selected: {location: 'Heat Map'},
+    state = { selected: {text: 'Heat Map'},
                          map: 'Heat Map' }
-    componentDidMount () {
+
+    async componentDidMount () {
         navigator.geolocation.getCurrentPosition(
-            location => this.setState({location})
-        )
-      
+            location => this.setState({location}) )
+        const States= await getStates()
+        const {Markers,HeatMap} = await getInfectedMaps()
+        this.setState({States,Markers,HeatMap,ready:true})
     }
+
     setOption=(option)=>{
       this.setState({selected: option,
                       map: option.text})
     }
+
     render() {
         const { location } = this.state
         return (
 
             <React.Fragment>
             {this.state.location != null &&
-             
                 <MapView
                 provider={PROVIDER_GOOGLE}
                 customMapStyle={mapStyle}
                 style={{...StyleSheet.absoluteFillObject, flex: 1}}
-                //style={{flex:1}}
                 initialRegion={{
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
@@ -229,16 +228,22 @@ export default class extends React.Component {
                 clusterColor='red'
                 showsUserLocation
               >
-
-            {this.state.map=='State Map' &&
-              (States) }
+{this.state.ready &&
+  (
+    <React.Fragment>
+            {this.state.map=='State Map' && 
+              (this.state.States) }
             {this.state.map=='Heat Map' && 
-            (HeatMap) }
-          {this.state.map=='Cluster Map' &&
-             (Markers) }
+              (this.state.HeatMap) }
+            {this.state.map=='Cluster Map' &&
+              (this.state.Markers) }
 
+  </React.Fragment>
+  )             
+            } 
             </MapView>
             }
+
             <View style={style.container}>
               <Menu 
               setOption={this.setOption}
@@ -250,7 +255,9 @@ export default class extends React.Component {
             
         )
     }
+   
 }
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
