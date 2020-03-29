@@ -15,7 +15,7 @@ export const getInfected = () =>
      
 
 export const updateLocation = async (takeMeasurement = false, options={}) => {
-    const user_identifier = await storage_api.getMyIdentifier();
+    const identifier = await storage_api.getMyIdentifier();
     const old_place_id = await AsyncStorage.getItem(CACHED_LOCATION);
     (takeMeasurement ? Location.getCurrentPositionAsync(options) : Location.getLastKnownPositionAsync())
     .then(location => {
@@ -25,7 +25,7 @@ export const updateLocation = async (takeMeasurement = false, options={}) => {
     .then(resp => resp.results[0].place_id)
     .then(new_place_id => {
         console.log('NEW PLACE ', new_place_id)
-        utils.post('/update-location', { new_place_id, old_place_id, user_identifier })
+        utils.post('/update-location', { new_place_id, identifier, old_place_id })
         AsyncStorage.setItem(CACHED_LOCATION, new_place_id)
     })
     //.catch(err => console.log(err)) // currently just fail silently
