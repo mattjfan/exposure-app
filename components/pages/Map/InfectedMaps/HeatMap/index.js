@@ -9,7 +9,6 @@ const Gradient = {
      }
 
 export const getHeatMap = (data) =>{
-
     let heat_data=data.locations.map(({latitude,longitude})=>{ 
         latitude=parseFloat(latitude)
         longitude=parseFloat(longitude)
@@ -27,8 +26,8 @@ export const getHeatMap = (data) =>{
                                 }}
         maxIntensity={100}
     //    radius={0}
-       gradientSmoothing={100}
-        gradient={Gradient}
+     //  gradientSmoothing={100}
+     //   gradient={Gradient}
                                 />
  )
 }

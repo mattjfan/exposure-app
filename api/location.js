@@ -2,11 +2,11 @@ import * as utils from './utils';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import * as storage_api from './storage';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, AppState } from 'react-native';
 import * as BackgroundFetch from 'expo-background-fetch';
 
 const CACHED_LOCATION = '@EXPOSURE_APP_CACHED_PLACE_ID'
-
+const LAST_PERIODIC_UPDATE= '@EXPOSURE_APP_LAST_UPDATE'
 // Updates location.
 // Can specify to take a new measurement, and provide options if desired
 
@@ -44,14 +44,19 @@ export const updateCachedLocation = (takeMeasurement = false, options={}) =>
 ;
 
 export const updateContactedPeersWithCachedLocation = () => {
-    console.log('HEEELLOOOOOO')
+    console.log('HELLO')
+    if(AppState.currentState=='active'){
+   return BackgroundFetch.Result.NewData
+} else{
     AsyncStorage.getItem(CACHED_LOCATION)
-    .then(place_id => updateContactedPeers(place_id))
-    
+    .then((place_id)=>updateContactedPeers(place_id)) 
+}
 }
 
 // can use in promise chain after updateCachedLocation() or AsyncStorage.getItem(CACHED_LOCATION)
 export const updateContactedPeers = (place_id) => {
     utils.post('/get-contacted-ids', {place_id})
     .then(({ tokens }) => storage_api.putContactedTokens(tokens) )
+    .then(()=>BackgroundFetch.Result.NewData)
+    .catch(()=>BackgroundFetch.Result.NoData)
 }
