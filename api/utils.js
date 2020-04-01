@@ -44,6 +44,7 @@ export const post = (endpoint, body = {}) =>
     })
     .then(response => Promise.all([response, response.json()]))
     .then(([res, json]) => checkError(res, json))
+    .catch((err)=>console.log(err))
 
 export const getJSONFromExternalEndpoint = (endpoint) =>
         fetch(endpoint)

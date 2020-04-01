@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, Platform } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform,AsyncStorage } from 'react-native';
 import { ScreenOrientation } from 'expo';
 import { ApplicationProvider, Layout, Text, BottomNavigation, BottomNavigationTab, IconRegistry, Drawer } from '@ui-kitten/components';
 import { mapping, light as lightTheme, dark } from '@eva-design/eva';
@@ -15,30 +15,27 @@ import * as TaskManager from 'expo-task-manager';
 import Dev from './components/dev';
 import * as api from './api';
 
+const CACHED_LOCATION = '@EXPOSURE_APP_CACHED_PLACE_ID'
 const TASK_ON_LOC_CHANGE = "@EXPOSURE_APP_TASK_ON_LOC_CHANGE";
 const TASK_PERIODIC_UPDATE = "@EXPOSURE_APP_TASK_PERIODIC_UPDATE";
 
 TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location.updateLocation)
 
-TaskManager.defineTask(TASK_PERIODIC_UPDATE, () => {
-  try{
-  console.log('YAAAASS');
-  api.location.updateContactedPeersWithCachedLocation();
-  return BackgroundFetch.Result.NewData; }
-  catch(error) {
-    return BackgroundFetch.Result.Failed;
-  }
-})
+TaskManager.defineTask(TASK_PERIODIC_UPDATE,api.location.updateContactedPeersWithCachedLocation)
+//BackgroundFetch.unregisterTaskAsync(TASK_PERIODIC_UPDATE)
+//BackgroundFetch.unRegisterTaskAsync(TASK_PERIODIC_UPDATE)
+const ForeGroundBackGroundTask=()=>{
+  AsyncStorage.getItem(CACHED_LOCATION)
+  .then((place_id)=>api.location.updateContactedPeers(place_id)) 
+  return setTimeout(_=>ForeGroundBackGroundTask(),600000)
+}
 
- 
-TaskManager.unregisterTaskAsync(TASK_PERIODIC_UPDATE)
+ForeGroundBackGroundTask()
 
-
-
-
-const handleBackgroundTasksIOs = () => {
+const handleBackgroundTasksIOs = async () => {
+  console.log('SETTING UP')
   // Location.setApiKey()
-  TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
+await TaskManager.isTaskRegisteredAsync(TASK_ON_LOC_CHANGE).then(isRegistered => !isRegistered &&
     Location.startLocationUpdatesAsync(TASK_ON_LOC_CHANGE, {
       accuracy: Location.Accuracy.High,
       distanceInterval: 100,
@@ -47,18 +44,25 @@ const handleBackgroundTasksIOs = () => {
     })
   )
   
-  TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
-    BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
-      minimumInterval: 650,
-      stopOnTerminate: false,
-      startOnBoot: true,
-    })
+  await TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then((isRegistered)=> {
+
+  //Location.stopLocationUpdatesAsync(TASK_PERIODIC_UPDATE)
+  if(!isRegistered){
+ // BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE).then(()=>BackgroundFetch.setMinimumIntervalAsync())
+  Location.startLocationUpdatesAsync(TASK_PERIODIC_UPDATE,{ accuracy: Location.Accuracy.High, distanceInterval:1, timeInterval: 600000, deferredUpdatesInterval: 600000 }) }
+  }
+    
+    
+    //pausesUpdatesAutomatically: true})
+  
   )
- BackgroundFetch.setMinimumIntervalAsync(650)
+  
 }
 
+
+
 const handleBackgroundTasksAndroid = () => {
-  TaskManager.defineTask(TASK_ON_LOC_CHANGE, api.location. updateLocation)
+  TaskManager.defineTassk(TASK_ON_LOC_CHANGE, api.location. updateLocation)
   TaskManager.defineTask(TASK_PERIODIC_UPDATE, api.location.updateContactedPeersWithCachedLocation)
   
   // Location.setApiKey()
@@ -69,13 +73,14 @@ const handleBackgroundTasksAndroid = () => {
     })
   )
   
-  TaskManager.isTaskRegisteredAsync(TASK_PERIODIC_UPDATE).then(isRegistered => !isRegistered &&
+
     BackgroundFetch.registerTaskAsync(TASK_PERIODIC_UPDATE, {
-      minimumInterval: 300,
+      minimumInterval: 600,
       stopOnTerminate: false,
-      startOnBoot: true,
+     startOnBoot: true,
     })
-  )
+
+    BackgroundFetch.setMinimumIntervalAsync(600)
 }
 
 const startPushNotificationsListener = () => {
